@@ -1,0 +1,82 @@
+RESUME SUMMARY
+==============
+**Skills:**
+
+1. Programming languages: Python, C++, Shell Scripting (Bash), SQL
+2. ML Frameworks: PyTorch, TensorFlow (Inference), Scikit-learn
+3. Model Export & Inference: ONNX, TorchScript, ONNX Runtime
+4. AI Compiler / Acceleration Tools: TensorRT, OpenVINO, TVM (Exposure), XLA (Conceptual Exposure)
+5. Optimization & Quantization: FP16, INT8 Quantization, Accuracy vs Latency Tradeoff Analysis
+6. Runtime Debugging & Profiling: Inference Benchmarking, Latency Profiling, Memory Profiling, Regression Analysis, Linux Performance Tools
+7. Deployment Stack: Docker, Kubernetes, CI/CD (Exposure), Linux Runtime Environments
+8. Agentic AI Debugging: Tool Calling Pipelines, Multi-Step Execution Debugging, Prompt/Response Validation
+
+**Experience:**
+
+1. 4+ years of experience as an AI/ML Engineer
+2. Experience in building and deploying scalable ML and analytics solutions
+3. Strong focus on inference optimization and production runtime stability
+4. Hands-on experience in developing model execution pipelines and automation workflows for production environments
+5. Experience in building and optimizing inference pipelines using ONNX Runtime, with exposure to acceleration stacks such as TensorRT and OpenVINO
+6. Proven experience in debugging inference bottlenecks across model graph, runtime execution, memory usage, and compute profiling metrics
+
+**Strengths:**
+
+1. Strong proficiency in Python and C++, with hands-on experience in developing model execution pipelines and automation workflows
+2. Deep understanding of AI inference lifecycle, including model training/export, ONNX conversion, compilation, runtime execution, and deployment integration
+3. Expertise in optimizing inference pipelines using ONNX Runtime and acceleration stacks such as TensorRT and OpenVINO
+4. Strong skills in automating model compilation and runtime execution validation using Python and shell scripting
+5. Proven ability to debug inference bottlenecks and optimize runtime performance
+6. Experience in developing agentic AI workflows and debugging tool-calling pipelines
+7. Strong expertise in runtime regression analysis, benchmarking inference performance, and tracking latency drift across model versions.
+
+QUESTIONS AND ANSWERS
+=====================
+Q1: Can you describe a scenario where you had to perform accuracy vs latency tradeoff analysis for an AI model and how you determined the optimal balance between these two factors for a production environment?
+A1: In a typical production scenario, I would evaluate a model serving real-time predictions (e.g., NLP classification or ranking) where strict p95 latency constraints exist. I would benchmark the FP32 baseline first, then apply optimizations like FP16/INT8 quantization, pruning, or XLA/ONNX graph optimizations while tracking accuracy drop vs latency gain.
+To find the optimal balance, I would plot accuracy degradation against latency reduction across multiple configurations (FP32, FP16, INT8 PTQ/QAT variants) and identify the “knee point” where latency improvements start yielding disproportionate accuracy loss. I would also validate on real traffic-like data distributions to ensure robustness.
+Finally, I would choose the configuration that meets SLA (e.g., p95 latency target) with minimal acceptable accuracy drop, often preferring mixed precision or selective quantization for sensitive layers to stabilize performance in production.
+--------------------
+Q2: Can you elaborate on how you determine the minimal acceptable accuracy drop in a production environment, and what specific metrics or evaluation methods you use to define and measure this threshold, particularly when dealing with mixed precision or selective quantization approaches?
+A2: The “minimal acceptable accuracy drop” is defined relative to the business KPI, not just model metrics—i.e., what level of degradation does not materially affect user outcomes (CTR, conversion, F1, ranking quality, etc.). I typically start by establishing a baseline FP32 model benchmark on a representative validation + production-like dataset, then define acceptable deltas with stakeholders (e.g., ≤0.5–1% absolute drop in key metric or statistically insignificant change).
+
+To measure it, I use a mix of:
+
+Primary task metrics (Accuracy, F1, BLEU, NDCG, AUC depending on task)
+Tail metrics (p95/p99 error rate, worst-case slice performance)
+Distribution shift tests on real or shadow traffic
+Statistical significance testing (confidence intervals / bootstrap) to ensure changes aren’t noise
+
+For mixed precision or selective quantization, I do layer-wise sensitivity analysis, quantizing components incrementally and tracking marginal impact. Critical layers (e.g., attention, normalization, output projection) are often kept in FP16/FP32 if they disproportionately affect metric drops. The final threshold is chosen where latency gains plateau vs. accuracy degradation starts accelerating—the “inflection region”—while still staying within SLA and business tolerance limits.
+--------------------
+Q3: Can you walk me through a specific scenario where you had to perform layer-wise sensitivity analysis for mixed precision or selective quantization, and how you determined which critical layers, such as attention or normalization, should be kept in higher precision to minimize the impact on the overall model accuracy and business KPIs?
+A3: In a typical production NLP scenario (e.g., transformer-based ranking or classification model), I would start by quantizing the model incrementally rather than all at once to understand layer-wise sensitivity to INT8 noise.
+
+First, I would establish a FP32 baseline and define KPIs (e.g., NDCG for ranking, F1/accuracy for classification, plus latency p95). Then I run selective quantization experiments, starting with low-risk layers like feed-forward (MLP) blocks while keeping attention, LayerNorm, and output projection in FP32/FP16.
+
+Next, I perform ablation-style sensitivity testing, where I individually quantize or dequantize layers and measure marginal impact on both offline metrics and a small shadow traffic set. In practice, I often observe:
+
+Attention layers are highly sensitive due to softmax amplification of quantization noise
+LayerNorm is sensitive because small distribution shifts propagate through the network
+Embedding/output projections can also disproportionately affect ranking/classification quality
+
+To quantify this, I track delta impact per layer group, such as:
+
+ΔAccuracy / ΔNDCG when quantizing a specific block
+activation distribution drift (KL divergence or cosine shift)
+error concentration on edge cases or long-tail inputs
+
+Based on this, I classify layers into:
+
+Safe to quantize (INT8): MLP blocks, 일부 linear layers
+Hybrid precision (FP16): intermediate projections
+High precision (FP32/FP16 only): attention softmax, LayerNorm, final logits
+
+The final decision is driven by a Pareto tradeoff curve between latency reduction and KPI degradation. I choose the configuration at the “knee point,” where quantizing additional layers causes a sharp drop in business metrics but earlier layers provide most of the latency gain. This selective approach typically retains near-FP32 accuracy while achieving most of the INT8 performance benefits.
+--------------------
+Q4: Can you describe your experience with using Docker and Kubernetes for deploying AI models, and how you ensure the scalability and reliability of these deployments in a production environment?
+A4: I dont know the answer
+--------------------
+Q5: Can you explain how you would utilize TensorRT and OpenVINO to optimize the inference pipeline for a deep learning model, and what strategies you would employ to leverage their acceleration capabilities in a production environment?
+A5: I dont know the answer
+--------------------

@@ -1,0 +1,54 @@
+RESUME SUMMARY
+==============
+**Skills:**
+
+1. Programming languages: Python, C++, Shell Scripting (Bash), SQL
+2. Machine Learning frameworks: PyTorch, TensorFlow (Inference), Scikit-learn
+3. Model Export and Inference: ONNX, TorchScript, ONNX Runtime
+4. AI Compiler and Acceleration Tools: TensorRT, OpenVINO, TVM, XLA
+5. Optimization and Quantization: FP16, INT8 Quantization, Accuracy vs Latency Tradeoff Analysis
+6. Runtime Debugging and Profiling: Inference Benchmarking, Latency Profiling, Memory Profiling, Regression Analysis
+7. Deployment Stack: Docker, Kubernetes, CI/CD, Linux Runtime Environments
+8. Agentic AI Debugging: Tool Calling Pipelines, Multi-Step Execution Debugging, Prompt/Response Validation
+
+**Experience:**
+
+1. 4+ years of experience as an AI/ML Engineer building and deploying scalable ML and analytics solutions
+2. Experience in developing and optimizing inference pipelines using ONNX Runtime, TensorRT, and OpenVINO
+3. Hands-on experience in applying quantization strategies (FP16/INT8) and evaluating accuracy vs latency tradeoffs
+4. Strong expertise in runtime regression analysis, benchmarking inference performance, and tracking latency drift
+5. Proven experience in debugging inference bottlenecks across model graph, runtime execution, memory usage, and compute profiling metrics
+6. Experience in developing and deploying agentic AI workflows, debugging tool-calling pipelines, and ensuring stable multi-step execution in production environments
+
+**Strengths:**
+
+1. Strong proficiency in Python and C++, with hands-on experience in developing model execution pipelines and automation workflows
+2. Deep understanding of AI inference lifecycle, including model training, export, compilation, runtime execution, and deployment integration
+3. Experience in building and optimizing inference pipelines using ONNX Runtime, with exposure to acceleration stacks such as TensorRT and OpenVINO
+4. Skilled in automating model compilation and runtime execution validation using Python and shell scripting
+5. Strong expertise in runtime debugging and profiling, with experience in identifying and resolving performance bottlenecks
+6. Proven ability to work on complex projects, with a strong focus on production-grade deployment and runtime reliability.
+
+QUESTIONS AND ANSWERS
+=====================
+Q1: How would you design and implement a CI/CD pipeline for deploying and managing AI models in a Kubernetes environment to ensure seamless integration and scalability of your AIML applications?
+A1: Hello.
+--------------------
+Q2: How would you approach optimizing the accuracy versus latency tradeoff for a deep learning model using quantization strategies such as FP16 and INT8, and what metrics would you use to evaluate the effectiveness of these optimizations?
+A2: I’d start with a FP32 baseline, then benchmark FP16 and INT8 variants using ONNX Runtime/TensorRT to measure real latency and accuracy deltas.
+FP16 is typically the first step since it gives speedups with minimal accuracy loss, while INT8 is applied with careful calibration or QAT if sensitivity is high.
+I’d use mixed-precision fallback (keeping sensitive layers like first/last or normalization in higher precision) to recover accuracy where INT8 struggles.
+Effectiveness is evaluated using latency (p50/p95), throughput, memory footprint, and task metrics (top-1/F1), selecting the best Pareto point under SLA constraints.
+--------------------
+Q3: Can you elaborate on how you determine which specific layers, such as the first or last layers, or normalization layers, should be kept in higher precision using mixed-precision fallback, and what role do you think calibration or QAT plays in making this decision for INT8 quantization?
+A3: I determine sensitive layers using a mix of activation statistics + ablation testing: I compare FP32 vs INT8 output drift per layer and look for high error accumulation, often in first conv, last classifier, and normalization blocks.
+First/last layers are usually kept in FP16/FP32 because they directly affect input representation and final decision boundaries, so small quantization noise gets amplified.
+Normalization layers (BatchNorm/LayerNorm) are sensitive because their small variance values can explode under INT8 scaling, so they’re often excluded or fused carefully.
+Calibration helps estimate stable activation ranges, while QAT actively adapts weights to quantization noise—together they decide whether INT8 is sufficient or fallback is required.
+--------------------
+Q4: Can you provide more insight into how you fuse normalization layers carefully to mitigate the effects of INT8 scaling, and what specific techniques or tools you have used in the past to adapt BatchNorm or LayerNorm to quantized environments while minimizing accuracy degradation?
+A4: i dont know 
+--------------------
+Q5: How would you leverage your experience with Agentic AI Debugging to develop a comprehensive testing strategy for a multi-step execution pipeline, ensuring that each step's output is correctly validated and that the entire pipeline is resilient to potential errors or failures?
+A5: I dont know
+--------------------

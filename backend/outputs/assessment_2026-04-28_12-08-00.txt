@@ -1,0 +1,75 @@
+RESUME SUMMARY
+==============
+Here's a summary of the resume in the requested format:
+
+**Skills:**
+- Programming languages: Python
+- Frameworks: Django, FastAPI, Flask
+- Databases: PostgreSQL, MySQL, MongoDB
+- Cloud platforms: AWS (EC2, S3 basics)
+- Containers: Docker
+- Operating Systems: Linux
+- Version control: Git
+- APIs: REST APIs, Microservices
+- Authentication: JWT
+
+**Experience:**
+- 1.5 years of experience as a Python Backend Developer
+- Developed and maintained RESTful APIs
+- Worked on database design, cloud deployment, and microservices architecture
+- Integrated third-party APIs for payment and authentication services
+- Deployed applications using Docker and AWS EC2
+- Built scalable backend systems for e-commerce and task management applications
+
+**Strengths:**
+- Strong problem-solving skills
+- Experience in Agile development environments
+- Ability to optimize database queries for improved performance
+- Proficient in building scalable and secure backend services
+- Strong understanding of cloud deployment and microservices architecture
+
+QUESTIONS AND ANSWERS
+=====================
+Q1: How would you optimize the performance of a PostgreSQL database in a high-traffic e-commerce application using indexing and query optimization techniques?
+A1: I’d start by identifying slow queries using EXPLAIN ANALYZE and query logs, then optimize them before adding indexes blindly. For indexing, I’d use B-tree indexes on frequently filtered columns (e.g., user_id, order_id), composite indexes for multi-column filters, and partial indexes for common conditions (e.g., active orders).
+
+Next, I’d eliminate inefficiencies like SELECT *, unnecessary joins, and N+1 query patterns, while ensuring proper use of JOINs, WHERE clauses, and pagination (LIMIT/OFFSET or cursor-based). I’d also use query rewriting and caching (Redis) for frequently accessed data.
+
+Finally, I’d monitor performance using pg_stat_statements, tune configuration (work_mem, shared_buffers), and periodically VACUUM/ANALYZE to maintain index efficiency and accurate query planning under high traffic.
+--------------------
+Q2: Can you elaborate on how you would determine the optimal values for work_mem and shared_buffers in a high-traffic PostgreSQL database, and what tools or metrics you would use to gauge the effectiveness of your tuning efforts in this area?
+A2: I’d size shared_buffers first (typically ~20–30% of RAM) based on workload and OS cache behavior, then tune work_mem per query by analyzing sort/hash operations via EXPLAIN ANALYZE (look for disk spills). The goal is to give enough memory to avoid temp disk usage without overcommitting under high concurrency.
+
+To validate, I’d monitor metrics from pg_stat_statements, pg_stat_database, and pg_stat_bgwriter, focusing on temp file usage, cache hit ratio (~99%), sort method (disk vs memory), and query latency (p95/p99).
+
+I’d also use tools like auto_explain, pgBadger, or EXPLAIN (BUFFERS) to see buffer hits vs reads, ensuring shared_buffers is effectively used and not causing excessive disk I/O.
+
+Final tuning is iterative—adjust values, run load tests (or observe production traffic), and pick settings where latency stabilizes, temp spills drop, and memory usage remains safe under peak concurrency.
+--------------------
+Q3: How would you handle a situation where, despite optimal shared_buffers and work_mem settings, you still observe high temp file usage and disk spills, and what additional factors or PostgreSQL configuration parameters would you investigate to resolve this issue?
+A3: If spills persist, it usually means query shape or concurrency—not just memory—is the bottleneck. I’d first target the worst offenders via EXPLAIN (ANALYZE, BUFFERS) and pg_stat_statements, rewriting queries (reduce wide sorts, push filters early, fix joins) and adding/adjusting indexes to avoid large hash/sort operations.
+
+Next, I’d check parallelism and per-query memory multiplication—high max_parallel_workers_per_gather and many concurrent queries can exhaust memory and force spills; tune these alongside connection pooling. Also review temp_buffers, maintenance_work_mem (for builds), and ensure LIMIT/cursor-based pagination to avoid big sorts.
+
+I’d investigate data skew and stats quality—run ANALYZE, increase default_statistics_target, and consider extended statistics so the planner picks better plans. Partitioning large tables can also reduce working set sizes for sorts/joins.
+
+Finally, look at I/O and temp storage: move temp files to faster disks (temp_tablespaces), ensure sufficient IOPS, and monitor temp file size/rate, p95 latency, and cache hit ratio to confirm improvements.
+--------------------
+Q4: How would you design and implement a secure authentication and authorization system using JWT in a microservices architecture with multiple services and APIs, ensuring that each service can verify and validate tokens issued by an authentication service?
+A4: Use a dedicated Auth Service that issues short-lived JWT access tokens (and longer-lived refresh tokens). Sign tokens with an asymmetric key (RS256), embedding claims like sub, roles, scopes, exp, iss, aud.
+
+Expose a JWKS endpoint so all microservices can fetch and cache public keys to verify signatures locally (no central call). Each service validates: signature, expiry, issuer, audience, and required scopes/roles before allowing access.
+
+Enforce auth at an API Gateway (coarse-grained) and again in services (fine-grained RBAC/ABAC). Use HTTPS everywhere, rotate keys regularly, keep access tokens short-lived, and implement refresh token + revocation (blacklist/rotation).
+
+Add observability and defense-in-depth: rate limiting, token binding (optional), audit logs, and least-privilege scopes per service to minimize blast radius if a token is compromised.
+--------------------
+Q5: How would you handle the scenario where a refresh token is compromised, and an attacker attempts to use it to obtain a new access token, considering the revocation and rotation mechanisms you mentioned, and what additional measures would you take to prevent or mitigate such an attack in your proposed authentication and authorization system?
+A5: Treat refresh tokens as one-time use with rotation: every refresh returns a new token and invalidates the previous one. If an old refresh token is seen again, flag reuse detection, immediately revoke the entire token family/session, and force re-authentication.
+
+Store refresh tokens hashed (not plaintext) with metadata (device, IP, last-used). On refresh, verify match + context; if anomalies appear (geo/IP drift, impossible travel), trigger step-up auth (MFA) or block.
+
+Keep refresh tokens long but bounded TTL, access tokens short-lived, and support server-side revocation lists (or token versioning per user) so compromised sessions can be killed instantly across services.
+
+Add defenses: secure storage (HTTP-only, Secure cookies), DPoP/token binding or device binding where possible, rate-limit refresh endpoints, audit logs + alerts, and rapid key rotation if broader compromise is suspected.
+--------------------

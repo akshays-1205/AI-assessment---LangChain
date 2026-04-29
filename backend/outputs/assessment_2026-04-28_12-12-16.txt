@@ -1,0 +1,45 @@
+RESUME SUMMARY
+==============
+Here's a summary of the resume in the requested format:
+
+* **Skills**: 
+  - Programming languages: Python
+  - Frameworks: Django, FastAPI, Flask
+  - Databases: PostgreSQL, MySQL, MongoDB
+  - Deployment tools: Docker, AWS (EC2, S3 basics)
+  - Operating Systems: Linux
+  - Version control: Git
+  - APIs: REST APIs, Microservices
+* **Experience**: 
+  - 1.5 years of experience as a Python Backend Developer
+  - Developed and maintained RESTful APIs
+  - Optimized database queries and integrated third-party APIs
+  - Deployed applications using Docker and AWS EC2
+  - Built scalable backend systems for e-commerce and task management
+* **Strengths**: 
+  - Strong problem-solving skills
+  - Experience in Agile development environments
+  - Ability to optimize database queries for improved performance
+  - Proficient in building scalable and secure backend systems
+  - Strong understanding of cloud deployment and microservices architecture
+
+QUESTIONS AND ANSWERS
+=====================
+Q1: How would you design a microservices-based architecture for a large-scale e-commerce application using Python and the frameworks you've listed, ensuring scalability, security, and efficient communication between services?
+A1: Start with domain-driven microservices using Python frameworks: FastAPI for APIs (orders, users, catalog, payments), Django for admin-heavy services, each with its own database (PostgreSQL). Containerize with Docker and orchestrate via Kubernetes for autoscaling and resilience.
+
+Use an API Gateway for routing, auth, and rate limiting; implement JWT-based auth with a central auth service. For communication, use REST/gRPC for synchronous calls and a message broker like Apache Kafka or RabbitMQ for async workflows (orders, inventory updates).
+
+Ensure scalability via horizontal scaling, caching (Redis), and CDN for static assets. Apply security best practices: HTTPS, secrets management, RBAC, input validation, and service-to-service auth (mTLS if needed).
+
+Add observability and reliability: centralized logging, metrics (Prometheus/Grafana), tracing, circuit breakers, retries, and CI/CD pipelines for safe, independent deployments.
+--------------------
+Q2: How would you handle a situation where one of the microservices, such as the payments service, experiences a sudden spike in traffic and begins to fail, and what specific strategies would you employ using the circuit breakers and retries you mentioned to prevent cascading failures and ensure the overall resilience of the e-commerce application?
+A2: First, isolate the failure: put a circuit breaker around the payments client in calling services (or at the API Gateway). When error rate/latency crosses a threshold, the breaker opens—calls fail fast (no waiting), preventing thread/connection exhaustion and stopping cascade.
+
+For retries, use bounded, idempotent retries only (e.g., for safe ops or with idempotency keys on payments). Apply exponential backoff + jitter and a small max retry count to avoid retry storms; disable retries when the breaker is open.
+
+Add graceful fallbacks: queue the payment request (async via message broker), return “pending” status, or switch to a backup provider. Combine with rate limiting, load shedding, and autoscaling on the payments service to absorb spikes.
+
+Continuously monitor p95 latency, error rate, and queue depth; when metrics recover, the circuit breaker moves to half-open to cautiously resume traffic.
+--------------------
